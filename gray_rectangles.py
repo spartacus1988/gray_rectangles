@@ -28,6 +28,57 @@ def threshold_slow(T, image):
 
 
 
+def threshold_slow_delta(T, image, delta_height, delta_width):
+	# grab the image dimensions
+	h = image.shape[0]
+	w = image.shape[1]
+
+	delta_height_prev = 0
+	delta_width_prev = 0
+
+	brightness_sum = 0
+
+	while delta_width_prev < w-2:
+
+		while delta_height_prev < h-2:
+		
+			# loop over the image, pixel by pixel
+			for y in range(delta_height_prev, delta_height_prev + delta_height):
+				for x in range(delta_width_prev, delta_width_prev + delta_width):
+					# threshold the pixel
+					#image[y, x] = 255 if image[y, x] >= T else 0
+					brightness_sum = brightness_sum + image[y, x]
+			
+
+			brightness_avg = brightness_sum/(delta_height * delta_width)
+			brightness_sum = 0
+			gray_scale = 255 if brightness_avg >= T else 0
+
+			# loop over the image, pixel by pixel
+			for y in range(delta_height_prev, delta_height_prev + delta_height):
+				for x in range(delta_width_prev, delta_width_prev + delta_width):
+					image[y, x] = gray_scale
+
+			delta_height_prev = delta_height_prev + delta_height
+
+		delta_width_prev = delta_width_prev + delta_width
+		delta_height_prev = 0
+
+
+
+
+
+
+
+
+	# return the thresholded image
+	return image, brightness_sum, brightness_avg
+
+
+
+
+
+
 if __name__ == "__main__":
 
 
@@ -36,12 +87,27 @@ if __name__ == "__main__":
 
 	img = cv2.imread(path_file)
 
-	cvt_image = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+	cvt_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+
 	#cv2.imwrite('indexc_gray.jpeg', img)
 
 
-	cvt_image = threshold_slow(127, cvt_image)
+	#cvt_image = threshold_slow(127, cvt_image)
 
+	height, width = cvt_image.shape
+	print(height, width)
+
+
+	delta_height = height/11
+	delta_height = round(delta_height, 0)
+	delta_height = int(delta_height)
+	delta_width = width/11
+	delta_width = round(delta_width, 0)
+	delta_width = int(delta_width)
+
+
+	cvt_image, brightness_sum, brightness_avg = threshold_slow_delta(127, cvt_image, delta_height, delta_width)
 
 
 	cv2.imshow('image', cvt_image)
@@ -51,6 +117,10 @@ if __name__ == "__main__":
 	k = cv2.waitKey(0)
 	if k == 27:         # wait for ESC key to exit
 		cv2.destroyAllWindows()
+		print(height, width)
+		print(delta_height, delta_width)
+		print(brightness_sum)
+		print(brightness_avg )
 
 
 
