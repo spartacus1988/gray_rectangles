@@ -72,7 +72,7 @@ def threshold_slow_delta(T, image, delta_height, delta_width):
 
 
 	# return the thresholded image
-	return image, brightness_sum, brightness_avg
+	return image
 
 
 
@@ -99,15 +99,15 @@ if __name__ == "__main__":
 	print(height, width)
 
 
-	delta_height = height/11
+	delta_height = height/50
 	delta_height = round(delta_height, 0)
 	delta_height = int(delta_height)
-	delta_width = width/11
+	delta_width = width/50
 	delta_width = round(delta_width, 0)
 	delta_width = int(delta_width)
 
 
-	cvt_image, brightness_sum, brightness_avg = threshold_slow_delta(127, cvt_image, delta_height, delta_width)
+	cvt_image= threshold_slow_delta(127, cvt_image, delta_height, delta_width)
 
 
 	cv2.imshow('image', cvt_image)
@@ -119,8 +119,9 @@ if __name__ == "__main__":
 		cv2.destroyAllWindows()
 		print(height, width)
 		print(delta_height, delta_width)
-		print(brightness_sum)
-		print(brightness_avg )
+		cv2.imwrite('indexc_gray_chank.jpeg', cvt_image)
+		#print(brightness_sum)
+		#print(brightness_avg )
 
 
 
