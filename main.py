@@ -109,7 +109,8 @@ class Model(object):
         dx, dy = (PADDING, PADDING)
         im = Image.new('RGB', (self.width * m + dx, self.height * m + dy))
         draw = ImageDraw.Draw(im)
-        draw.rectangle((0, 0, self.width * m, self.height * m), FILL_COLOR)
+        #draw.rectangle((0, 0, self.width * m, self.height * m), FILL_COLOR)
+        draw.rectangle((0, 0, self.width * m, self.height * m), fill="black")
         for quad in self.root.get_leaf_nodes(max_depth):
             l, t, r, b = quad.box
             box = (l * m + dx, t * m + dy, r * m - 1, b * m - 1)
@@ -119,8 +120,8 @@ class Model(object):
                 radius = m * min((r - l), (b - t)) / 4
                 rounded_rectangle(draw, box, radius, quad.color)
             else:
-                print("box_is: "+str(box))
-                print("quad.color_is : "+str(quad.color))
+                #print("box_is: "+str(box))
+                #print("quad.color_is : "+str(quad.color))
                 box = list(box)
                 quad.color = list(quad.color)
                 i = 0
@@ -129,15 +130,25 @@ class Model(object):
                     num = round(num)
                     box[i] = num
                     i += 1
-                    print("box_is: "+str(box))
+                    #print("box_is: "+str(box))
                 box = tuple(box)
                 i = 0
                 for num in quad.color:
-
                     num = round(num)
+                    if num in range(0, 50):
+                        num = 25
+                    if num in range(50, 100):
+                        num = 75
+                    if num in range(100, 150):
+                        num = 125
+                    if num in range(150, 200):
+                        num = 175
+                    if num in range(200, 255):
+                        num = 225
+
                     quad.color[i] = num
                     i += 1
-                    print("quad.color_is : "+str(quad.color))
+                    #print("quad.color_is : "+str(quad.color))
                 quad.color = tuple(quad.color)
 
                 draw.rectangle(box, quad.color)
@@ -159,7 +170,7 @@ def main():
                 model.render('frames/%06d.png' % i)
             previous = error
         model.split()
-    model.render('output.png')
+    model.render('output.png', 5)
     print('-' * 32)
     depth = Counter(x.depth for x in model.quads)
     for key in sorted(depth):
